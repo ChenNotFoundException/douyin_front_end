@@ -1,0 +1,21 @@
+{
+  "pages": [
+    "pages/index/index",
+    "pages/userLogin/login",
+    "pages/report/report",
+    "pages/videoinfo/videoinfo",
+    "pages/searchVideo/searchVideo",
+    "pages/videotest/videotest",
+    "pages/chooseBgm/chooseBgm",
+    "pages/mine/mine",
+    "pages/userRegist/regist"
+  ],
+  "window": {
+    "backgroundTextStyle": "light",
+    "navigationBarBackgroundColor": "#fff",
+    "navigationBarTitleText": "抖抖音",
+    "navigationBarTextStyle": "black"
+  },
+  "debug": true,
+  "sitemapLocation": "sitemap.json"
+}
