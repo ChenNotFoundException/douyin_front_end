@@ -67,6 +67,7 @@ Page({
 
 
             var redirectUrl = me.redirectUrl ;
+            var user = app.getGlobalUserInfo();
             //debugger
             if (redirectUrl != null && redirectUrl != undefined && redirectUrl!=""){
               //跳转
@@ -76,7 +77,7 @@ Page({
             }else{
               //跳转
               wx.redirectTo({
-                url: '../index/index',
+                url: '../mine/mine?publisherId=' + user.id,
               })
             }
             

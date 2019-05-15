@@ -79,13 +79,9 @@ data-replyToUserId='{{replyToUserId}}'
 </view>
 
 <block wx:for="{{commentsList}}">
-  <view class='comments-all' bindtap='replyFocus' 
-  data-fatherCommentId='{{item.id}}'  
-  data-toUserId='{{item.fromUserId}}' 
-  data-toNickname='{{item.nickname}}' 
-  >
+  <view class='comments-all' bindtap='replyFocus' data-fatherCommentId='{{item.id}}'  data-toUserId='{{item.fromUserId}}' data-toNickname='{{item.nickname}}'>
       <view class='container-comments'>
-          <image class="face-comments" src='{{serverUrl}}{{item.faceImage}}' ></image>
+          <image class="face-comments" src="{{prefix}}{{item.faceImage}}"></image>
           <view class='nickname-comments'>
               <label class='nickname-lbl'>@{{item.nickname}}</label>
               于 

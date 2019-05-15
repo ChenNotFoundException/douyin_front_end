@@ -14,6 +14,7 @@ Page({
         videoParms:params
       });
       var serverUrl = app.serverUrl;
+      var serverUrl2 = app.serverUrl2;
       wx.request({
         url: serverUrl + '/bgm/list',
         method: "post",
@@ -27,7 +28,7 @@ Page({
             var bgmList=res.data.data;
             me.setData({
               bgmList:bgmList,
-              serverUrl:serverUrl
+              serverUrl:serverUrl,
             })
           }
         }

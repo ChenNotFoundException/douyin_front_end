@@ -10,7 +10,12 @@ Page({
     userLikeVideo:false,
     publiser:{},
     faceImage:"",
-    creater:""
+    creater:"",
+    placeholder:"说点什么吧",
+    commentsPage: 1,
+    commentsTotalPage: 1,
+    commentsList: [],
+    prefix:""
   },
 
   videoXCtx:{},
@@ -33,6 +38,7 @@ Page({
       src: app.serverUrl+videoInfo.videoPath,
       videoInfo: videoInfo,
       cover:cover,
+      prefix: app.serverUrl
     });
     var user = app.getGlobalUserInfo();
     var serverUrl = app.serverUrl;
@@ -48,8 +54,8 @@ Page({
         var publiser = res.data.data.publiser;
         var userLikeVideo = res.data.data.userLikeVideo;
  
-        console.log(serverUrl);
-        console.log(publiser.faceImage);
+        //console.log(serverUrl);
+        //console.log(publiser.faceImage);
         var faceImage = serverUrl + publiser.faceImage;
         var creater = publiser.nickname;
         //debugger
@@ -62,6 +68,8 @@ Page({
       },
       
     })
+
+    me.getCommentsList(1);
   },
   
   onShow: function () {
@@ -134,7 +142,6 @@ Page({
     var user = app.getGlobalUserInfo();
     var videoInfo = (me.data.videoInfo);
     var realUrl = '../videoinfo/videoinfo#videoInfo@' + videoInfo;
-    //debugger
     if (user == null || user == undefined || user == '') {
       wx.redirectTo({
         url: '../userLogin/login?redirectUrl=' + realUrl,
@@ -145,7 +152,6 @@ Page({
       // })
     } else {
       var userLikeVideo = me.data.userLikeVideo;
-//      debugger
       var url = '/video/userLike?userId='+user.id+'&videoId='+videoInfo.id +'&videoCreaterId='+videoInfo.userId;
       
       if (userLikeVideo){
@@ -262,6 +268,92 @@ Page({
       path: "pages/videoinfo/videoinfo?videoInfo=" + JSON.stringify(videoInfo)
     }
   },
+  
+  leaveComment:function(){
+    this.setData({
+      commentFocus: true
+    });
+  },
 
+  saveComment: function (e) {
+    var me = this;
+    var content = e.detail.value;
+    // 获取评论回复的fatherCommentId和toUserId
+    var fatherCommentId = e.currentTarget.dataset.replyfathercommentid;
+    var toUserId = e.currentTarget.dataset.replytouserid;
 
+    var user = app.getGlobalUserInfo();
+    var videoInfo = JSON.stringify(me.data.videoInfo);
+    var realUrl = '../videoinfo/videoinfo#videoInfo@' + videoInfo;
+
+    if (user == null || user == undefined || user == '') {
+      wx.navigateTo({
+        url: '../userLogin/login?redirectUrl=' + realUrl,
+      })
+    } else {
+      wx.showLoading({
+        title: '请稍后...',
+      })
+      wx.request({
+        // url: app.serverUrl + '/video/saveComment?fatherCommentId=' + fatherCommentId + "&toUserId=" + toUserId,
+        url: app.serverUrl + '/video/saveComment',
+        method: 'POST',
+        header: {
+          'content-type': 'application/json', // 默认值
+          'headerUserId': user.id,
+          'headerUserToken': user.userToken
+        },
+        data: {
+          fromUserId: user.id,
+          videoId: me.data.videoInfo.id,
+          comment: content
+        },
+        success: function (res) {
+          console.log(res.data)
+          wx.hideLoading();
+
+          me.setData({
+            contentValue: "",
+            commentsList: []
+          });
+
+          me.getCommentsList(1);
+        }
+      })
+    }
+  },
+
+  getCommentsList: function (page) {
+    var me = this;
+
+    var videoId = me.data.videoInfo.id;
+
+    wx.request({
+      url: app.serverUrl + '/video/getVideoComments?videoId=' + videoId + "&page=" + page + "&pageSize=5",
+      method: "POST",
+      success: function (res) {
+        console.log(res.data);
+
+        var commentsList = res.data.data.rows;
+        var newCommentsList = me.data.commentsList;
+
+        me.setData({
+          commentsList: newCommentsList.concat(commentsList),
+          commentsPage: page,
+          commentsTotalPage: res.data.data.total
+        });
+      }
+    })
+  },
+
+  onReachBottom: function () {
+    var me = this;
+    var currentPage = me.data.commentsPage;
+    var totalPage = me.data.commentsTotalPage;
+    if (currentPage === totalPage) {
+      return;
+    }
+    var page = currentPage + 1;
+    me.getCommentsList(page);
+  }
 })

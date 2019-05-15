@@ -1,8 +1,7 @@
 //app.js
 App({
-  //serverUrl:"http://b82df604.ngrok.io",
-  serverUrl: "http://172.28.189.142:8081",
-
+  serverUrl:"http://35.236.185.203/v",
+  //serverUrl: "http://172.81.208.233",
   userInfo: null,
   
   setGlobalUserInfo: function (user) {
